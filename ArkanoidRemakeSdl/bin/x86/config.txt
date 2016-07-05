@@ -1,0 +1,2 @@
+Fullscreen Width Height Audio Music Sound
+ false 680 512 true 32 24

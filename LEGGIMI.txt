@@ -1,0 +1,123 @@
+Arkanoid Remake SDL
+versione 1.0
+Giovanni Paolo Vigano'
+gpv.code@gmail.com
+Giugno 2016
+-----------------------
+
+Versione natalizia di un vecchio famoso gioco, utilizzando la libreria SDL2.
+
+Per avviare il gioco
+---------------------
+Nella sottocartella SDL\bin\x86\ eseguire ArkanoidRemakeSdl.exe, per chiuderlo premere ESC, per attivare o disattivare l'audio premere A.
+La soluzione Visual Studio 2010 contenente tutti i progetti è in "ArkanoidRemakeSdl\projects\VS2010\ArkanoidRemakeSdl.sln", la versione per Visual Studio 2015 è in "ArkanoidRemakeSdl\projects\VS2015\ArkanoidRemakeSdl.sln".
+
+Introduzione
+-------------
+Questo gioco è stato sviluppato principalmente con scopi didattici, per insegnare la programmazione in C++ e ad oggetti.
+Un primo prototipo (incompleto ma funzionante) è stato presentato alla conclusione di un corso di programmazione organizzato da Istituto di Tecnologie Industriali e Automazione del CNR (CNR-ITIA) nell'ambito del progetto Design4All, con lo scopo di illustrare con un esempio alcuni vantaggi della programmazione ad oggetti.
+L'autore, dipendente del CNR-ITIA, ha sviluppato questo progetto nel tempo libero, utilizzando il proprio netbook (Windows XP, 1GB RAM, Intel Atom N450), anche se una fase preliminare di ricerca di idee e risorse (in preparazione del suddetto corso) e la creazione dei progetti per il Visual Studio 2015 è stata svolta presso CNR-ITIA.
+L'attività di sviluppo è comunque proseguita nel tempo libero con l'idea di completare il lavoro e riorganizzarlo per poterlo divulgare.
+L'idea originale dell'autore era la creazione di un'applicazione che dimostrasse come con la programmazione orientata agli oggetti fosse possibile codificarne la logica una sola volta e riutilizzare tale codice per creare più soluzioni alternative implementate appoggiandosi a differenti framework. Questa prima implementazione utilizza la libreria SDL2 per la grafica, il sonoro e la gestione dell'input. Il passo successivo, non ancora realizzato, potrebbe essere l'implementazione dello stesso gioco utilizzando un'altra libreria (es. OpenGL, OpenSceneGraph, delta 3d, Ogre 3D, ecc.).
+Questo progetto non rappresenta di sicuro un perfetto modello di progettazione del software, c'è ancora molto da fare e migliorare, ma può essere un buon punto di partenza per familiarizzare con i concetti della programmazione orientata agli oggetti in C++.
+
+Il gioco
+---------
+Essendo stato presentato il 22 dicembre (al corso di Design4All) questo gioco è a sfondo natalizio: una piccola palla di neve viene lanciata contro mattoni che si rompono facendo cadere fiocchi di neve, decorazioni natalizie e regali, che aumentano il punteggio se colpiti con la racchetta. La modalità di gioco è semplice: la pallina urta i blocchi e deve rimbalzare sulla racchetta controllata dal mouse, altrimenti viene persa e il punteggio viene abbassato (in questo caso per rilanciare la pallina premere il pulsante sinistro del mouse). Lo scopo è far rimbalzare la pallina finché non vengono distrutti tutti i blocchi.
+Il gioco per ora ha solo un livello predefinito che si ripete all'infinito, andrebbero aggiunti livelli eventualmente caricati da file di configurazione.
+Nella stessa cartella dell'eseguibile il file config.txt contiene una semplice configurazione del gioco. Nella prima riga di testo c'è una breve descrizione delle impostazioni, nella seconda linea sono memorizzate alcune impostazioni di base (modalità a schermo intero, larghezza e altezza della finestra quando non è a schermo intero, audio abilitato, volume di musica e suoni). Questo file di configurazione viene caricato quando parte il gioco e salvato quando si esce si esce.
+
+Architettura
+-------------
+L'applicazione ha una struttura modulare, con un modulo principale (ArkanoidRemakeSDL) che si appoggia ad altri moduli tra loro indipendenti (ArkanoidRemake,SDLTK). Questi ultimi moduli a loro volta utilizzano librerie (nel caso del modulo SDLTK) o interfacce (nel caso di ArkanoidRemake) più generiche. Segue una breve spiegazione dei vari moduli.
+ArkanoidRemake: implementa una generica interfaccia "App", le funzioni di base e la logica del gioco. In questo modulo, oltre all'interfaccia "App", è definita una classe ArkanoidRemake, utilizzata dal modulo ArkanoidRemakeSDL per l'implementazione con SDL.
+ArkanoidRemakeSDL: appoggiandosi a SDLTK implementa grafica e audio per il gioco, gestisce l'input da tastiera e mouse. In questo modulo vengono definite (o ridefinite) solo le funzionalità che riguardano l'implementazione scelta (grafica, audio e interazione basate su SDL), demandando le funzioni di base, gli algoritmi di calcolo e la logica di funzionamento al modulo base ArkanoidRemake. In questo modulo è definita proprio una classe ArkanoidRemakeSDL che eredita direttamente dalla classe ArkanoidRemake.
+SDLTK: (SDL toolkit) implementa grafica e audio, gestisce l'input da tastiera e mouse. Questa libreria non è sicuramente né completa né ottimizzata, e chiunque con un po' di esperienza di programmazione con SDL potrebbe fare di meglio (per l'autore questa è stata la prima esperienza di programmazione con SDL), ma è stata realizzata con l'obiettivo di nascondere tutti i dettagli implementativi, incluse le strutture dati interne di SDL, per consentire a chi esplora il codice di questa applicazione di concentrarsi sulla logica di funzionamento, senza dover conoscere SDL (o qualsiasi altra libreria che potrebbe prendere il suo posto). Questo approccio consentirebbe di utilizzare l'interfaccia qui implementata con SDL per realizzare una nuova versione basata su una differente libreria, idealmente senza modifiche al codice degli altri moduli.
+
+Implementazione
+----------------
+Il codice è scritto interamente in C++, sviluppato con Microsoft Visual Studio 2010 Express SP1, utilizzando le librerie standard del C++ e alcune delle caratteristiche dello standard C++11 (supportate da Visual Studio 2010 SP1 in poi e dalle ultime versioni di GCC). I progetti possono essere importati da versioni successive di Visual Studio (è stata creata anche una versione Visual Studio 2015), le librerie e DLL di SDL sono disponibili su web (http://www.libsdl.org/), comunque la versione di SDL qui distribuita dovrebbe supportare tutte le versioni di Visual Studio. Le configurazioni per la piattaforma x64, disponibili per la versione Visual Studio 2015, non sono presenti per la versione Visual Studio 2010.
+La libreria SDLTK è collegata al suo interno con SDL, quindi linkando SDLTK viene linkata anche SDL, anche se è comunque necessario che sia disponibile la DLL di SDL insieme all'eseguibile o comunque in un percorso registrato.
+Anche se il codice sorgente è stato compilato e testato solo su Windows, la libreria SDL è disponibile per diverse piattaforme e dovrebbe essere possibile farlo funzionare anche su piattaforme differenti.
+Anche se è possibile modificare il progetto Visual Studio per eseguire il gioco senza la console, in questa versione la console viene visualizzata a scopo di debugging, per mostrare eventuali messaggi di errore.
+In questa implementazione si assume l'asse X come orizzontale e l'asse Y come verticale.
+
+Riconoscimenti
+---------------
+Anche se questo progetto è stato sviluppato nel tempo libero, va ricordato che l'autore deve la sua esperienza di programmazione principalmente all'attività di ricerca applicata svolta presso CNR-ITIA e l'idea di questo progetto è nata dalla preparazione delle lezioni in occasione di corso di programmazione organizzato dall'istituto.
+L'implementazione del framework SDLTK si appoggia alla libreria SDL2, un progetto open source, utilizzabile e distribuibile con licenza ZLIB (https://www.libsdl.org/license.php).
+L'idea di utilizzare SDL2 come prima implementazione è ispirata da un codice analogo sviluppato da Valtteri Ahlström (https://code.google.com/archive/p/sdl-arkanoid/), al quale l'autore si è riferito per implementare una prima versione, poi riscritta completamente utilizzando un approccio orientato agli oggetti, mantenendo varie idee ottenute dal codice originale.
+Il materiale utilizzato per grafica e audio proviene da fonti royalty free disponibili in rete. La musica proviene da una fonte dichiarata royalty free (http://www.freexmasmp3.com/), i suoni sono remix di clip audio royalty free provenienti da varie fonti, mentre le immagini sono state o create dall'autore oppure ottenute elaborando immagini trovate su Google con il filtro attivato per l'autorizzazione al riutilizzo con modifiche.
+Le immagini sono state generate con GIMP2 (http://www.gimp.org) e i suoni con Audacity (http://audacity.sourceforge.net).
+La documentazione del codice sorgente è stata creata utilizzando Doxygen (http://www.doxygen.org/).
+
+Problemi e possibili miglioramenti
+-----------------------------------
+Il codice sorgente non è esente da errori, ci sono warning durante il linking ancora da risolvere, il codice della libreria SDLTK potrebbe essere riscritto sicuramente in modo più efficiente e ci sarebbe molto da migliorare.
+Inoltre sono state introdotte varie semplificazioni, l'implementazione potrebbe essere migliorata, ma lo scopo di questo progetto non è tanto creare di un videogioco di qualità, ma fornire un esempio pratico dei vantaggio della programmazione ad oggetti. Anche il modello a oggetti potrebbe essere migliorato, soprattutto in vista di ulteriori estensioni, come l'uso di librerie grafiche differenti.
+Durante l'esecuzione occasionalmente potrebbero avvenire arresti critici, probabilmente si tratta dell'implementazione del rendering del testo in SDLTK, ma il problema non è ancora stato risolto.
+
+Licenza
+--------
+Il codice sorgente è distribuito liberamente (licenza zlib, www.zlib.org), le altre risorse (immagini, ecc.) prodotte dall'autore sono di pubblico dominio (per la musica ed eventuali altri file non prodotti dall'autore valgono le relative licenze).
+
+Struttura delle cartelle
+-------------------------
+La struttura delle cartelle è pensata per estendere i progetti a più piattaforme e più compilatori.
+
++---ArkanoidRemakeSdl   Implementazione con SDL
+|   +---bin             file binari e di configurazione per ogni piattaforma
+|   |   +---x64         (DLL di SDL2 a 64 bit)
+|   |   \---x86         eseguibile e DLL
+|   +---data            dati usati dal gioco
+|   |   +---font        font per la visualizzazione del testo
+|   |   +---images      immagini
+|   |   +---music       musica del gioco
+|   |   \---sound       effetti sonori
+|   +---projects        ArkanoidRemakeSdl-progetti Visual Studio
+|   |   |---VS2010      progetto e soluzione Visual Studio 2010 (Express)
+|   |   \---VS2015      progetto e soluzione Visual Studio 2015 (Community)
+|   +---src
+|   |   +---include     ArkanoidRemakeSdl-file header
+|   |   \---source      ArkanoidRemakeSdl-file sorgenti
+|   \---TEMP            ArkanoidRemakeSdl-file intermedi di compilazione
+|
++---doc                 documentazione completa di ArkanoidRemakeSdl 
+|   \---html            documentazione HTML (aprire "index.html")
+|
++---lib                 ArkanoidRemakeSdl-file di libreria
+|   |---VC100-x86       file di libreria per Visual Studio 2010, 32 bit
+|   |---VC140-x86       file di libreria per Visual Studio 2015, 32 bit
+|   \---VC140-x54       file di libreria per Visual Studio 2015, 64 bit
+|
++---projects            progetti Visual Studio
+|   |---VS2010          progetto Visual Studio 2010 (Express)
+|   \---VS2015          progetto Visual Studio 2015 (Community)
+|
++---SDL                 libreria SDL2
+|   +---include         SDL2-file header
+|   \---lib             SDL2-file di libreria
+|       +---x64         SDL2-file di libreria per piattaforma a 64 bit
+|       \---x86         SDL2-file di libreria per piattaforma a 32 bit
+|
++---sdltk               libreria SDLTK
+|   +---bin             eseguibile del programma di test per SDLTK
+|   +---lib             SDLTK-file di libreria
+|   |   \---VC100-x86   file di libreria per Visual Studio 2010, 32 bit
+|   +---projects        progetti Visual Studio
+|   |   |---VS2010      progetti e soluzioni Visual Studio 2010 (Express)
+|   |   \---VS2015      progetti e soluzioni Visual Studio 2015 (Community)
+|   +---src
+|   |   +---include     SDLTK-file header
+|   |   \---source      SDLTK-file sorgenti
+|   |       \---test    file sorgente del programma di test per SDLTK
+|   \---TEMP            SDLTK-file intermedi di compilazione
+|
++---src
+|   +---include         ArkanoidRemake-file header
+|   \---source          ArkanoidRemake-file sorgenti
+|
+\---TEMP                ArkanoidRemake-file intermedi di compilazione
+
+
+
